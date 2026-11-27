@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Security & Secrets (do not commit keys or logs)
+encryption.key
+.env
+logs/
+
+# IDE
+.vscode/
+.idea/

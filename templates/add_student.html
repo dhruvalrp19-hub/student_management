@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Add Student - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8">
+        <div class="card p-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="text-white mb-1"><i class="bi bi-person-plus-fill" style="color: #667eea;"></i> Add New
+                        Student</h2>
+                    <p class="text-muted mb-0">Fields marked with * are required</p>
+                </div>
+                <span class="security-badge"><i class="bi bi-lock-fill"></i> Data will be AES encrypted</span>
+            </div>
+
+            <form method="POST" id="addStudentForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label"><i class="bi bi-person"></i> Name *</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Full name" required
+                            minlength="2">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="age" class="form-label"><i class="bi bi-calendar3"></i> Age *</label>
+                        <input type="number" class="form-control" id="age" name="age" placeholder="Age" required min="5"
+                            max="100">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="gender" class="form-label"><i class="bi bi-gender-ambiguous"></i> Gender</label>
+                        <select class="form-select" id="gender" name="gender">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label"><i class="bi bi-envelope"></i> Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="student@email.com"
+                            required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label"><i class="bi bi-telephone"></i> Phone <span
+                                class="badge badge-encrypted"><i class="bi bi-lock-fill"></i> Encrypted</span></label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="10-digit number"
+                            pattern="\d{10}" maxlength="10">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="class" class="form-label"><i class="bi bi-book"></i> Class *</label>
+                        <input type="text" class="form-control" id="class" name="class"
+                            placeholder="e.g. 10th, BCA, MCA" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="birthdate" class="form-label"><i class="bi bi-cake2"></i> Birthdate</label>
+                        <input type="date" class="form-control" id="birthdate" name="birthdate">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label"><i class="bi bi-house"></i> Address <span
+                            class="badge badge-encrypted"><i class="bi bi-lock-fill"></i> Encrypted</span></label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="Full address">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="city" class="form-label"><i class="bi bi-geo-alt"></i> City</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="City name">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="pincode" class="form-label"><i class="bi bi-mailbox"></i> Pincode <span
+                                class="badge badge-encrypted"><i class="bi bi-lock-fill"></i> Encrypted</span></label>
+                        <input type="text" class="form-control" id="pincode" name="pincode"
+                            placeholder="6-digit pincode" pattern="\d{6}" maxlength="6">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-primary flex-grow-1 py-2">
+                        <i class="bi bi-person-check"></i> Add Student (Encrypted)
+                    </button>
+                    <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary py-2">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

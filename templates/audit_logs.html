@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs - Student Management System{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-white mb-1"><i class="bi bi-journal-text" style="color: #eb3349;"></i> Audit Logs</h2>
+            <p class="text-muted mb-0">{{ total }} log entries | Complete security audit trail</p>
+        </div>
+        <span class="badge bg-danger">Admin Only</span>
+    </div>
+
+    <!-- Filter -->
+    <div class="card p-3 mb-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label"><i class="bi bi-funnel"></i> Filter by Action</label>
+                <select class="form-select" name="action">
+                    <option value="">All Actions</option>
+                    {% for action in all_actions %}
+                    <option value="{{ action }}" {% if action_filter == action %}selected{% endif %}>{{ action }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filter</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="card p-3">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td><small>{{ log.timestamp.strftime('%d %b %Y, %I:%M:%S %p') }}</small></td>
+                        <td><strong>{{ log.user }}</strong></td>
+                        <td>
+                            <span class="badge 
+                                {% if 'LOGIN' in log.action %}bg-info
+                                {% elif 'ADDED' in log.action %}bg-success
+                                {% elif 'DELETED' in log.action %}bg-danger
+                                {% elif 'UPDATED' in log.action %}bg-warning
+                                {% elif 'FAILED' in log.action %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ log.action }}
+                            </span>
+                        </td>
+                        <td><small>{{ log.details }}</small></td>
+                        <td><code style="color: #667eea;">{{ log.ip_address }}</code></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total_pages > 1 %}
+        <nav class="mt-3">
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ page-1 }}&action={{ action_filter }}"><i class="bi bi-chevron-left"></i></a>
+                </li>
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ p }}&action={{ action_filter }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="?page={{ page+1 }}&action={{ action_filter }}"><i class="bi bi-chevron-right"></i></a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

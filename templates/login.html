@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Login - Student Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center fade-in">
+    <div class="col-md-5">
+        <div class="card p-5">
+            <div class="text-center mb-4">
+                <i class="bi bi-shield-lock-fill" style="font-size: 3rem; color: #667eea;"></i>
+                <h2 class="text-white mt-2">Welcome Back</h2>
+                <p class="text-muted">Login to your secure account</p>
+            </div>
+
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+                    <label for="username" class="form-label"><i class="bi bi-person"></i> Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label"><i class="bi bi-lock"></i> Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                            <i class="bi bi-eye" id="password-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">Don't have an account? <a href="{{ url_for('register') }}" style="color: #667eea;">Register here</a></p>
+            </div>
+
+            <div class="text-center mt-3">
+                <small class="security-badge">
+                    <i class="bi bi-shield-check"></i> Protected with Rate Limiting & Session Security
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    const icon = document.getElementById(id + '-icon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+}
+</script>
+{% endblock %}

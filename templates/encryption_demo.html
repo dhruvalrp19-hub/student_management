@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Encryption Demo - Student Management System{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="text-center mb-4">
+        <h2 class="text-white"><i class="bi bi-lock-fill" style="color: #667eea;"></i> Encryption & Hashing Demo</h2>
+        <p class="text-muted">Interactive demonstration of AES encryption and SHA-256 hashing (INS Feature)</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- How It Works -->
+        <div class="col-12">
+            <div class="card p-4 mb-4">
+                <h5 class="text-white mb-3"><i class="bi bi-info-circle"></i> How Security Works in This System</h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: rgba(102,126,234,0.1); border-radius: 12px;">
+                            <i class="bi bi-lock-fill" style="font-size: 2rem; color: #667eea;"></i>
+                            <h6 class="text-white mt-2">AES-128 (Fernet)</h6>
+                            <small class="text-muted">Encrypts sensitive data like phone, address, pincode using symmetric key encryption</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: rgba(56,239,125,0.1); border-radius: 12px;">
+                            <i class="bi bi-hash" style="font-size: 2rem; color: #38ef7d;"></i>
+                            <h6 class="text-white mt-2">SHA-256 Hash</h6>
+                            <small class="text-muted">Creates fixed-size digest for data integrity verification. One-way function.</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: rgba(247,151,30,0.1); border-radius: 12px;">
+                            <i class="bi bi-key-fill" style="font-size: 2rem; color: #f7971e;"></i>
+                            <h6 class="text-white mt-2">PBKDF2-SHA256</h6>
+                            <small class="text-muted">Password hashing with 260,000 iterations + random salt for user passwords</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center p-3" style="background: rgba(235,51,73,0.1); border-radius: 12px;">
+                            <i class="bi bi-shield-check" style="font-size: 2rem; color: #eb3349;"></i>
+                            <h6 class="text-white mt-2">CSRF Tokens</h6>
+                            <small class="text-muted">Random 256-bit tokens prevent cross-site request forgery attacks</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encrypt / Decrypt Tool -->
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <h5 class="text-white mb-3"><i class="bi bi-lock"></i> Encrypt Text (AES-128)</h5>
+                <form method="POST">
+                    <input type="hidden" name="action" value="encrypt">
+                    <div class="mb-3">
+                        <label class="form-label">Enter Plain Text</label>
+                        <textarea class="form-control" name="text" rows="3" placeholder="Type any text to encrypt..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-lock-fill"></i> Encrypt & Hash
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-4 h-100">
+                <h5 class="text-white mb-3"><i class="bi bi-unlock"></i> Decrypt Text (AES-128)</h5>
+                <form method="POST">
+                    <input type="hidden" name="action" value="decrypt">
+                    <div class="mb-3">
+                        <label class="form-label">Enter Encrypted Text</label>
+                        <textarea class="form-control" name="text" rows="3" placeholder="Paste encrypted text here..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="bi bi-unlock-fill"></i> Decrypt
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results -->
+        {% if result %}
+        <div class="col-12">
+            <div class="card p-4">
+                <h5 class="text-white mb-3">
+                    {% if result.action == 'encrypt' %}
+                    <i class="bi bi-check-circle" style="color: #38ef7d;"></i> Encryption Result
+                    {% else %}
+                    <i class="bi bi-check-circle" style="color: #667eea;"></i> Decryption Result
+                    {% endif %}
+                </h5>
+
+                {% if result.action == 'encrypt' %}
+                <div class="mb-3 p-3" style="background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    <small class="text-muted">Original Text:</small>
+                    <p class="text-white mb-0" style="word-break: break-all;">{{ result.original }}</p>
+                </div>
+                <div class="mb-3 p-3" style="background: rgba(102,126,234,0.1); border-radius: 10px;">
+                    <small class="text-muted"><i class="bi bi-lock-fill"></i> AES Encrypted (Fernet):</small>
+                    <p class="text-white mb-0" style="word-break: break-all; font-family: monospace; font-size: 0.85rem;">{{ result.encrypted }}</p>
+                </div>
+                <div class="p-3" style="background: rgba(56,239,125,0.1); border-radius: 10px;">
+                    <small class="text-muted"><i class="bi bi-hash"></i> SHA-256 Hash:</small>
+                    <p class="text-white mb-0" style="word-break: break-all; font-family: monospace; font-size: 0.85rem;">{{ result.hash_sha256 }}</p>
+                </div>
+                {% else %}
+                <div class="mb-3 p-3" style="background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    <small class="text-muted">Encrypted Input:</small>
+                    <p class="text-white mb-0" style="word-break: break-all; font-family: monospace; font-size: 0.85rem;">{{ result.original }}</p>
+                </div>
+                <div class="p-3" style="background: rgba(56,239,125,0.1); border-radius: 10px;">
+                    <small class="text-muted"><i class="bi bi-unlock-fill"></i> Decrypted Text:</small>
+                    <p class="text-white mb-0" style="word-break: break-all;">{{ result.decrypted }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

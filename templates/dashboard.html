@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="text-white mb-1"><i class="bi bi-bar-chart-fill" style="color: #f7971e;"></i> Analytics Dashboard</h2>
+            <p class="text-muted mb-0">Visual overview of student data</p>
+        </div>
+        <span class="security-badge"><i class="bi bi-shield-check"></i> Data decrypted for display only</span>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card" style="border-left: 4px solid #667eea;">
+                <div class="stat-number" style="color: #667eea;">{{ total_students }}</div>
+                <div class="stat-label"><i class="bi bi-mortarboard"></i> Total Students</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card" style="border-left: 4px solid #38ef7d;">
+                <div class="stat-number" style="color: #38ef7d;">{{ total_users }}</div>
+                <div class="stat-label"><i class="bi bi-people"></i> System Users</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card" style="border-left: 4px solid #f7971e;">
+                <div class="stat-number" style="color: #f7971e;">{{ class_data|length }}</div>
+                <div class="stat-label"><i class="bi bi-collection"></i> Total Classes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="text-white mb-3"><i class="bi bi-pie-chart"></i> Class-wise Distribution</h5>
+                <canvas id="classChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="text-white mb-3"><i class="bi bi-bar-chart"></i> City-wise Distribution</h5>
+                <canvas id="cityChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="text-white mb-3"><i class="bi bi-gender-ambiguous"></i> Gender Distribution</h5>
+                <canvas id="genderChart" height="250"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h5 class="text-white mb-3"><i class="bi bi-clock-history"></i> Recently Added Students</h5>
+                {% if recent_students %}
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr><th>Name</th><th>Class</th><th>Added</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for s in recent_students %}
+                            <tr>
+                                <td>{{ s.name }}</td>
+                                <td><span class="badge bg-secondary">{{ s.class }}</span></td>
+                                <td><small>{{ s.created_at.strftime('%d %b %Y') if s.created_at else 'N/A' }}</small></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center py-4">No students yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Class Chart (Doughnut)
+    const classLabels = {{ class_data|map(attribute='_id')|list|tojson }};
+    const classCounts = {{ class_data|map(attribute='count')|list|tojson }};
+
+    new Chart(document.getElementById('classChart'), {
+        type: 'doughnut',
+        data: {
+            labels: classLabels,
+            datasets: [{
+                data: classCounts,
+                backgroundColor: ['#667eea', '#764ba2', '#38ef7d', '#f7971e', '#eb3349', '#6dd5ed', '#ffd200', '#11998e', '#f45c43'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#b0b0b0', padding: 15 } }
+            }
+        }
+    });
+
+    // City Chart (Bar)
+    const cityLabels = {{ city_data|map(attribute='_id')|list|tojson }};
+    const cityCounts = {{ city_data|map(attribute='count')|list|tojson }};
+
+    new Chart(document.getElementById('cityChart'), {
+        type: 'bar',
+        data: {
+            labels: cityLabels,
+            datasets: [{
+                label: 'Students',
+                data: cityCounts,
+                backgroundColor: 'rgba(102, 126, 234, 0.6)',
+                borderColor: '#667eea',
+                borderWidth: 1,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { ticks: { color: '#b0b0b0' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                x: { ticks: { color: '#b0b0b0' }, grid: { display: false } }
+            }
+        }
+    });
+
+    // Gender Chart (Pie)
+    const genderLabels = {{ gender_data|map(attribute='_id')|list|tojson }};
+    const genderCounts = {{ gender_data|map(attribute='count')|list|tojson }};
+
+    new Chart(document.getElementById('genderChart'), {
+        type: 'pie',
+        data: {
+            labels: genderLabels,
+            datasets: [{
+                data: genderCounts,
+                backgroundColor: ['#667eea', '#eb3349', '#38ef7d'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#b0b0b0', padding: 15 } }
+            }
+        }
+    });
+</script>
+{% endblock %}
